@@ -1,5 +1,6 @@
 package com.example.evan.leap_3.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
@@ -21,6 +22,9 @@ import com.example.evan.leap_3.adapter.QuizAdapter;
 import com.example.evan.leap_3.model.QuizItem;
 import com.nbsp.materialfilepicker.MaterialFilePicker;
 import com.nbsp.materialfilepicker.ui.FilePickerActivity;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private List<QuizItem> quizList = new ArrayList<>();
     private RecyclerView recView;
     private QuizAdapter adapter;
+    private String FileName = "QuizList";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -61,19 +66,29 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
+        //Creates the RecyclerView to display quiz items, and sets up the layout
         recView = (RecyclerView)findViewById(R.id.quizRecyclerView);
         recView.setLayoutManager(new LinearLayoutManager(this));
         recView.setItemAnimator(new DefaultItemAnimator());
 
+        //Creates the adapter and sets the RecyclerView's adapter to it
         adapter = new QuizAdapter(quizList);
         recView.setAdapter(adapter);
 
+        //Dummy item to test the adapter + RecView
+        QuizItem item = new QuizItem("Test String","Test Sub-string");
+        quizList.add(item);
+
+        //Creates and opens a file containing items to populate the list
+        try
+        {
+            FileOutputStream fos = openFileOutput(FileName, Context.MODE_PRIVATE);
 
 
-
-
-
+        } catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
 
 
     }
@@ -97,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
 
             Log.d("MainActivity", "File path: " + filePath);
             Log.d("MainActivity", "File Selected");
-            QuizItem item = new QuizItem(fileName, filePath);
+            QuizItem item = new QuizItem(filePath, fileName);
 
             quizList.add(item);
 

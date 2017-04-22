@@ -2,31 +2,44 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
-    android:paddingLeft="16dp"
+    android:layout_height="80dp"
     android:id="@+id/cont_item_root"
     android:gravity="center_vertical|left"
     >
 
-    <TextView
-        android:id="@+id/quizPath"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:paddingLeft="16dp"
-        android:text="Placeholder Text2"
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center|left"
+        android:src="@drawable/ic_insert_drive_file_black_24dp"/>
 
-        />
+
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
 
     <TextView
         android:id="@+id/quizName"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:paddingLeft="8dp"
-        android:text="Placeholder Text"
+        android:gravity="top"
+        android:text="Quiz Name"
+        android:layout_alignParentTop="true"
+        android:textSize="25sp"
+        android:layout_toEndOf="@+id/quizPath" />
 
-        />
+
+    <TextView
+        android:id="@+id/quizPath"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="left|bottom"
+        android:text="Quiz Path"/>
+    </LinearLayout>
+
 
 </LinearLayout>
