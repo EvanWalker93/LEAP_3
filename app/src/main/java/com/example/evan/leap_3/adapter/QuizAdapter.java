@@ -49,7 +49,7 @@ public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.QuizHolder>
     public void onBindViewHolder(QuizHolder holder, int position)
     {
         ListItem item = listData.get(position);
-        holder.title.setText(item.getTitle());
+        holder.title.setText(item.getQuizName());
         holder.icon.setImageResource(item.getImageResId());
     }
 

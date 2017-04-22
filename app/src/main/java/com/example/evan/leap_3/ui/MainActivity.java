@@ -6,6 +6,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,14 +19,18 @@ import com.example.evan.leap_3.R;
 import com.example.evan.leap_3.adapter.QuizAdapter;
 import com.example.evan.leap_3.model.ListItem;
 import com.example.evan.leap_3.model.QuizData;
+import com.example.evan.leap_3.model.QuizItem;
 import com.nbsp.materialfilepicker.MaterialFilePicker;
 import com.nbsp.materialfilepicker.ui.FilePickerActivity;
+import java.util.ArrayList;
+import java.util.List;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 
 public class MainActivity extends AppCompatActivity {
 
     private Button mBrowseButton;
+    private List<ListItem> quizList = new ArrayList<>();
     private RecyclerView recView;
     private QuizAdapter adapter;
 
@@ -60,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
         recView = (RecyclerView)findViewById(R.id.quizRecyclerView);
         recView.setLayoutManager(new LinearLayoutManager(this));
+        recView.setItemAnimator(new DefaultItemAnimator());
 
         adapter = new QuizAdapter(QuizData.getListData(), this);
         recView.setAdapter(adapter);
@@ -92,9 +98,9 @@ public class MainActivity extends AppCompatActivity {
 
             Log.d("MainActivity", "File path: " + filePath);
             Log.d("MainActivity", "File Selected");
-            ListItem item =
+            QuizItem item = new QuizItem(fileName, filePath);
 
-            adapter.add(item, adapter.getItemCount()+1);
+            quizList.add(item);
 
 
 
@@ -106,4 +112,6 @@ public class MainActivity extends AppCompatActivity {
             //TODO: RecyclerView (or ListView)
         }
     }
+
+
 }

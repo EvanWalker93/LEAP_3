@@ -22,7 +22,7 @@ public class QuizData
             {
                 ListItem item = new ListItem();
                 item.setImageResId(icons[i]);
-                item.setTitle(titles[i]);
+                item.setQuizName(titles[i]);
                 data.add(item);
 
             }

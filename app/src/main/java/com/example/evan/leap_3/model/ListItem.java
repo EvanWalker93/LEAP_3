@@ -6,25 +6,23 @@ package com.example.evan.leap_3.model;
 
 public class ListItem
 {
-    private String title;
+    private String quizName;
 
-    public String getTitle() {
-        return title;
+    public String getQuizName() {
+        return quizName;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setQuizName(String quizName) {
+        this.quizName = quizName;
     }
 
-    public int getImageResId() {
-        return imageResId;
-    }
+    private String quizPath;
 
-    public void setImageResId(int imageResId) {
-        this.imageResId = imageResId;
-    }
+    public String getQuizPath() { return  quizPath;}
 
-    private int imageResId;
+    public void setQuizPath(String quizPath){this.quizPath = quizPath;}
+
+
 
 
 
