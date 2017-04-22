@@ -17,8 +17,7 @@ import android.widget.Toast;
 
 import com.example.evan.leap_3.R;
 import com.example.evan.leap_3.adapter.QuizAdapter;
-import com.example.evan.leap_3.model.ListItem;
-import com.example.evan.leap_3.model.QuizData;
+
 import com.example.evan.leap_3.model.QuizItem;
 import com.nbsp.materialfilepicker.MaterialFilePicker;
 import com.nbsp.materialfilepicker.ui.FilePickerActivity;
@@ -30,7 +29,7 @@ import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 public class MainActivity extends AppCompatActivity {
 
     private Button mBrowseButton;
-    private List<ListItem> quizList = new ArrayList<>();
+    private List<QuizItem> quizList = new ArrayList<>();
     private RecyclerView recView;
     private QuizAdapter adapter;
 
@@ -67,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         recView.setLayoutManager(new LinearLayoutManager(this));
         recView.setItemAnimator(new DefaultItemAnimator());
 
-        adapter = new QuizAdapter(QuizData.getListData(), this);
+        adapter = new QuizAdapter(quizList);
         recView.setAdapter(adapter);
 
 
