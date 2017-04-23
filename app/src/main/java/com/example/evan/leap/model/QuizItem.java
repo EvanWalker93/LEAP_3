@@ -1,4 +1,4 @@
-package com.example.evan.leap_3.model;
+package com.example.evan.leap.model;
 
 /**
  * Created by Evan on 4/22/2017.

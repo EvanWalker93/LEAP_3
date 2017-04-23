@@ -1,4 +1,4 @@
-package com.example.evan.leap_3;
+package com.example.evan.leap;
 
 import org.junit.Test;
 

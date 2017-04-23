@@ -1,4 +1,4 @@
-package com.example.evan.leap_3.adapter;
+package com.example.evan.leap.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -6,9 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.evan.leap_3.R;
+import com.example.evan.leap.R;
 
-import com.example.evan.leap_3.model.QuizItem;
+import com.example.evan.leap.model.QuizItem;
 
 import java.util.List;
 

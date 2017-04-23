@@ -1,4 +1,4 @@
-package com.example.evan.leap_3;
+package com.example.evan.leap;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
