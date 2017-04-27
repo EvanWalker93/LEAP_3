@@ -6,8 +6,8 @@ package com.example.evan.leap.model;
 
 public class ListItem
 {
-    private String quizName;
     private String quizPath;
+    private String quizName;
 
 
 

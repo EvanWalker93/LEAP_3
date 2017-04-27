@@ -1,6 +1,6 @@
 package com.example.evan.leap.ui;
 
-import android.content.Context;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -24,10 +23,6 @@ import com.example.evan.leap.model.QuizItem;
 import com.nbsp.materialfilepicker.MaterialFilePicker;
 import com.nbsp.materialfilepicker.ui.FilePickerActivity;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -43,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<QuizItem> quizList = new ArrayList<>();
     private RecyclerView recView;
     private QuizAdapter adapter;
-    private String fileName = "test.txt";
     private static final String EXTRA_QUIZ_ITEMS = "quiz_items";
 
 
@@ -51,6 +45,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //if (){
+        //loadItems();
+        // }
+
 
 
 
@@ -61,12 +60,6 @@ public class MainActivity extends AppCompatActivity {
             // permission already granted, do something
         }
 
-
-        //Opens a file containing items to populate the list
-        //readFileToView();
-
-
-        //Toast.makeText(MainActivity.this, "Loaded", Toast.LENGTH_LONG).show();
 
 
         //Button to open file browser
@@ -88,8 +81,8 @@ public class MainActivity extends AppCompatActivity {
         recView.setAdapter(adapter);
 
         //Dummy item to test the adapter + RecView
-        QuizItem item = new QuizItem("Test Path", "Test Name");
-        quizList.add(item);
+        //QuizItem item = new QuizItem("Test Path", "Test Name");
+        //quizList.add(item);
 
 
         //String quizPath = readFile(fileName).toString();
@@ -99,33 +92,54 @@ public class MainActivity extends AppCompatActivity {
 
 
         if (savedInstanceState != null) {
-            Toast.makeText(MainActivity.this, "Loaded savedInstanceState", Toast.LENGTH_LONG).show();
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-            Set<String> QuizItems = preferences.getStringSet(EXTRA_QUIZ_ITEMS, new HashSet<String>());
-            List<String> list = new ArrayList<>();
-
-            System.out.println("SAVED INSTANCE RESULT "+preferences.getStringSet(EXTRA_QUIZ_ITEMS, new HashSet<String>()));
-            //quizList.add((QuizItem) list);
+            loadItems();
 
         }
 
     }
 
-    @Override
-    public void onPause() {
-        SharedPreferences sharedPref = getSharedPreferences(EXTRA_QUIZ_ITEMS, Context.MODE_PRIVATE);
+
+    public void loadItems(){
+
+        Toast.makeText(MainActivity.this, "Loaded savedInstanceState", Toast.LENGTH_SHORT).show();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        Set<String> QuizItems = preferences.getStringSet(EXTRA_QUIZ_ITEMS, new HashSet<String>());
+
+        String path = QuizItems.toString().replace("[","").replace("]","").trim();
+        String[] splitPaths = path.split(",");
+
+
+
+        for (int i=0; i < splitPaths.length; i++){
+            path = splitPaths[i].toString();
+            String name = (path.substring(path.lastIndexOf("/") + 1) + " ");
+            QuizItem item = new QuizItem(path, name);
+            quizList.add(item);
+            System.out.println("SAVED INSTANCE RESULT "+preferences.getStringSet(EXTRA_QUIZ_ITEMS, new HashSet<String>()));
+
+        }
+
+    }
+
+    public void saveItems(){
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = sharedPref.edit();
         Set<String> set = new HashSet<>();
 
         List<String> paths = new ArrayList<>();
         for (QuizItem item : quizList) {
-            paths.add(item.getQuizFilePath());
-            System.out.println(item.getQuizFilePath());
+            paths.add(item.getQuizFileName());
+            System.out.println("On Pause Written " + item.getQuizFilePath());
         }
         set.addAll(paths);
         editor.putStringSet(EXTRA_QUIZ_ITEMS, set);
         editor.apply();
-        System.out.println("OnPause written");
+
+    }
+
+    @Override
+    public void onPause() {
+        saveItems();
         super.onPause();
 
 
@@ -151,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
             QuizItem item = new QuizItem(filePath, fileName);
             quizList.add(item);
             adapter.notifyDataSetChanged();
-            Toast.makeText(getApplicationContext(), "Added " + fileName, Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Added " + fileName, Toast.LENGTH_SHORT).show();
 
 
 
@@ -163,6 +177,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onStop() {
+        saveItems();
         super.onStop();
     }
 

@@ -5,7 +5,7 @@ package com.example.evan.leap.model;
  */
 
 public class QuizItem extends ListItem {
-    private String quizFilePath, quizFileName;
+    private String quizFileName, quizFilePath;
 
     public QuizItem() {
     }
