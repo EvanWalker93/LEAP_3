@@ -45,12 +45,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        //if (){
-        //loadItems();
-        // }
-
-
+        Toast.makeText(getApplicationContext(), "on Create", Toast.LENGTH_SHORT).show();
 
 
         if (ContextCompat.checkSelfPermission(MainActivity.this, READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -80,20 +75,10 @@ public class MainActivity extends AppCompatActivity {
         adapter = new QuizAdapter(quizList);
         recView.setAdapter(adapter);
 
-        //Dummy item to test the adapter + RecView
-        //QuizItem item = new QuizItem("Test Path", "Test Name");
-        //quizList.add(item);
-
-
-        //String quizPath = readFile(fileName).toString();
-        //String quizName = (quizPath.substring(quizPath.lastIndexOf("/") + 1));
-        //QuizItem testItem = new QuizItem(quizPath, quizName);
-        //quizList.add(testItem);
-
-
+        loadItems();
         if (savedInstanceState != null) {
             loadItems();
-
+            adapter.notifyDataSetChanged();
         }
 
     }
@@ -101,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void loadItems(){
 
-        Toast.makeText(MainActivity.this, "Loaded savedInstanceState", Toast.LENGTH_SHORT).show();
+        Toast.makeText(MainActivity.this, "Loaded Items", Toast.LENGTH_SHORT).show();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         Set<String> QuizItems = preferences.getStringSet(EXTRA_QUIZ_ITEMS, new HashSet<String>());
 
@@ -109,14 +94,13 @@ public class MainActivity extends AppCompatActivity {
         String[] splitPaths = path.split(",");
 
 
-
+        quizList.clear();
         for (int i=0; i < splitPaths.length; i++){
             path = splitPaths[i].toString();
+            if(path == ""){break;}
             String name = (path.substring(path.lastIndexOf("/") + 1) + " ");
             QuizItem item = new QuizItem(path, name);
             quizList.add(item);
-            System.out.println("SAVED INSTANCE RESULT "+preferences.getStringSet(EXTRA_QUIZ_ITEMS, new HashSet<String>()));
-
         }
 
     }
@@ -129,21 +113,15 @@ public class MainActivity extends AppCompatActivity {
         List<String> paths = new ArrayList<>();
         for (QuizItem item : quizList) {
             paths.add(item.getQuizFileName());
-            System.out.println("On Pause Written " + item.getQuizFilePath());
         }
+
         set.addAll(paths);
         editor.putStringSet(EXTRA_QUIZ_ITEMS, set);
         editor.apply();
 
     }
 
-    @Override
-    public void onPause() {
-        saveItems();
-        super.onPause();
 
-
-    }
 
     private void browseForFiles() {
         new MaterialFilePicker()
@@ -165,22 +143,24 @@ public class MainActivity extends AppCompatActivity {
             QuizItem item = new QuizItem(filePath, fileName);
             quizList.add(item);
             adapter.notifyDataSetChanged();
+
+            //Loads items after adding, to avoid duplicate entries in the view
+            loadItems();
             Toast.makeText(getApplicationContext(), "Added " + fileName, Toast.LENGTH_SHORT).show();
-
-
-
-        }
+       }
     }
 
-
-
+    @Override
+    public void onPause() {
+        saveItems();
+        super.onPause();
+    }
 
     @Override
     public void onStop() {
         saveItems();
         super.onStop();
     }
-
 
 
 
