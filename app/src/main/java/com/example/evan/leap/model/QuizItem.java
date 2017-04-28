@@ -1,5 +1,7 @@
 package com.example.evan.leap.model;
 
+import java.util.Objects;
+
 /**
  * Created by Evan on 4/22/2017.
  */
@@ -15,6 +17,8 @@ public class QuizItem extends ListItem {
         this.quizFilePath = quizFilePath;
 
     }
+
+
 
     public String getQuizFileName() {
         return quizFileName;

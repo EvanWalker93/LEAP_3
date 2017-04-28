@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toast.makeText(getApplicationContext(), "on Create", Toast.LENGTH_SHORT).show();
+        loadItems();
 
 
         if (ContextCompat.checkSelfPermission(MainActivity.this, READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -75,7 +75,8 @@ public class MainActivity extends AppCompatActivity {
         adapter = new QuizAdapter(quizList);
         recView.setAdapter(adapter);
 
-        loadItems();
+
+
         if (savedInstanceState != null) {
             loadItems();
             adapter.notifyDataSetChanged();
@@ -95,12 +96,14 @@ public class MainActivity extends AppCompatActivity {
 
 
         quizList.clear();
+
         for (int i=0; i < splitPaths.length; i++){
             path = splitPaths[i].toString();
             if(path == ""){break;}
-            String name = (path.substring(path.lastIndexOf("/") + 1) + " ");
+            String name = (path.substring(path.lastIndexOf("/") + 1) + "");
             QuizItem item = new QuizItem(path, name);
             quizList.add(item);
+            adapter.notifyDataSetChanged();
         }
 
     }
@@ -137,15 +140,16 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == 1 && resultCode == RESULT_OK) {
             String filePath = data.getStringExtra(FilePickerActivity.RESULT_FILE_PATH);
-            String fileName = (filePath.substring(filePath.lastIndexOf("/") + 1) + " ");
+            String fileName = (filePath.substring(filePath.lastIndexOf("/") + 1) + "");
 
             //Adds the selected item to the quizList view and writes the path to file
             QuizItem item = new QuizItem(filePath, fileName);
             quizList.add(item);
             adapter.notifyDataSetChanged();
-
             //Loads items after adding, to avoid duplicate entries in the view
+            saveItems();
             loadItems();
+            //adapter.notifyDataSetChanged();
             Toast.makeText(getApplicationContext(), "Added " + fileName, Toast.LENGTH_SHORT).show();
        }
     }
