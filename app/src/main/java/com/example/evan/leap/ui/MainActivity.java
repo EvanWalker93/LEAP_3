@@ -26,6 +26,7 @@ import com.nbsp.materialfilepicker.ui.FilePickerActivity;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
@@ -34,27 +35,22 @@ import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String EXTRA_QUIZ_ITEMS = "quiz_items";
     private Button mBrowseButton;
     private ArrayList<QuizItem> quizList = new ArrayList<>();
     private RecyclerView recView;
     private QuizAdapter adapter;
-    private static final String EXTRA_QUIZ_ITEMS = "quiz_items";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        loadItems();
 
 
         if (ContextCompat.checkSelfPermission(MainActivity.this, READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             // permission not granted, requesting it:
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{READ_EXTERNAL_STORAGE}, 0);
-        } else {
-            // permission already granted, do something
         }
-
 
 
         //Button to open file browser
@@ -74,32 +70,36 @@ public class MainActivity extends AppCompatActivity {
         //Creates the adapter and sets the RecyclerView's adapter to it
         adapter = new QuizAdapter(quizList);
         recView.setAdapter(adapter);
+        loadItems();
 
 
-
-        if (savedInstanceState != null) {
-            loadItems();
-            adapter.notifyDataSetChanged();
-        }
 
     }
 
 
-    public void loadItems(){
+    public void loadItems() {
 
         Toast.makeText(MainActivity.this, "Loaded Items", Toast.LENGTH_SHORT).show();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         Set<String> QuizItems = preferences.getStringSet(EXTRA_QUIZ_ITEMS, new HashSet<String>());
 
-        String path = QuizItems.toString().replace("[","").replace("]","").trim();
+
+        String path = QuizItems.toString().replace("[", "").replace("]", "").trim();
+
+        if (path == ""){
+            return;
+        }
+
         String[] splitPaths = path.split(",");
 
 
         quizList.clear();
 
-        for (int i=0; i < splitPaths.length; i++){
-            path = splitPaths[i].toString();
-            if(path == ""){break;}
+        for (int i = 0; i < splitPaths.length; i++) {
+            path = splitPaths[i];
+            if (path == null) {
+                break;
+            }
             String name = (path.substring(path.lastIndexOf("/") + 1) + "");
             QuizItem item = new QuizItem(path, name);
             quizList.add(item);
@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void saveItems(){
+    public void saveItems() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = sharedPref.edit();
         Set<String> set = new HashSet<>();
@@ -123,7 +123,6 @@ public class MainActivity extends AppCompatActivity {
         editor.apply();
 
     }
-
 
 
     private void browseForFiles() {
@@ -142,34 +141,61 @@ public class MainActivity extends AppCompatActivity {
             String filePath = data.getStringExtra(FilePickerActivity.RESULT_FILE_PATH);
             String fileName = (filePath.substring(filePath.lastIndexOf("/") + 1) + "");
 
-            //Adds the selected item to the quizList view and writes the path to file
-            QuizItem item = new QuizItem(filePath, fileName);
-            quizList.add(item);
+            if(quizList.isEmpty() == true)
+            {
+                quizList.add(new QuizItem(filePath, fileName));
+                adapter.notifyDataSetChanged();
+                saveItems();
+                Toast.makeText(getApplicationContext(), "Quiz List Was Empty", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            else {
+                for (QuizItem item : quizList) {
+
+                    if (Objects.equals(item.getQuizFilePath(), fileName)) {
+
+                        //Adds the selected item to the quizList view and writes the path to file
+                        Toast.makeText(getApplicationContext(), "Item Already Added", Toast.LENGTH_SHORT).show();
+                        return;
+
+                    }
+                }
+            }
+
+            quizList.add(new QuizItem(filePath, fileName));
             adapter.notifyDataSetChanged();
-            //Loads items after adding, to avoid duplicate entries in the view
             saveItems();
-            loadItems();
-            //adapter.notifyDataSetChanged();
+
             Toast.makeText(getApplicationContext(), "Added " + fileName, Toast.LENGTH_SHORT).show();
-       }
+
+        }
     }
 
     @Override
-    public void onPause() {
+    public void onPause () {
         saveItems();
         super.onPause();
     }
 
     @Override
-    public void onStop() {
-        saveItems();
+    public void onStop () {
+        //saveItems();
         super.onStop();
     }
 
-
-
+    @Override
+    public void onDestroy () {
+        //saveItems();
+        super.onDestroy();
+    }
 
 }
+
+
+
+
+
 
 
 
