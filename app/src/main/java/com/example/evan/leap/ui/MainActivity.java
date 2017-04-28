@@ -86,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
         String path = QuizItems.toString().replace("[", "").replace("]", "").trim();
 
+
         if (path == ""){
             return;
         }
