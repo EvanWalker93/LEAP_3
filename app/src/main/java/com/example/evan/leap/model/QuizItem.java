@@ -6,11 +6,10 @@ import java.util.Objects;
  * Created by Evan on 4/22/2017.
  */
 
-public class QuizItem extends ListItem {
+public class QuizItem {
     private String quizFileName, quizFilePath;
 
-    public QuizItem() {
-    }
+
 
     public QuizItem(String quizFileName, String quizFilePath) {
         this.quizFileName = quizFileName;

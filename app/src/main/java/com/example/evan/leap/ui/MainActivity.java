@@ -24,6 +24,8 @@ import com.nbsp.materialfilepicker.MaterialFilePicker;
 import com.nbsp.materialfilepicker.ui.FilePickerActivity;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -79,23 +81,37 @@ public class MainActivity extends AppCompatActivity {
 
     public void loadItems() {
 
+        //Loads the list of items that were previously saved
+        //to the SharedPreferences to the set of strings QuizItems
         Toast.makeText(MainActivity.this, "Loaded Items", Toast.LENGTH_SHORT).show();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         Set<String> QuizItems = preferences.getStringSet(EXTRA_QUIZ_ITEMS, new HashSet<String>());
 
-
+        //Puts the saved elements into a single string 'path'
+        //Removes the brackets from the string
         String path = QuizItems.toString().replace("[", "").replace("]", "").trim();
 
-
+        //If the path is empty, assume no paths were saved and stop loading
         if (path == ""){
             return;
         }
 
+        //Split the string 'path' when there is a comma, then put it into the array 'splitPaths'
+        //Then, sort the array alphabetically by the file name, not the file path
         String[] splitPaths = path.split(",");
+        Arrays.sort(splitPaths, new Comparator<String>() {
+            @Override
+            public int compare(String str1, String str2) {
+                String substr1 = str1.substring(str1.lastIndexOf("/"));
+                String substr2 = str2.substring(str2.lastIndexOf("/"));
+                return substr1.compareTo(substr2);
+            }
+        });
 
 
         quizList.clear();
 
+        //Add all strings in splitPaths to the adapter quizList, then update the view
         for (int i = 0; i < splitPaths.length; i++) {
             path = splitPaths[i];
             if (path == null) {
