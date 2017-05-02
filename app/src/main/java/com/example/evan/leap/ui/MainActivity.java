@@ -10,8 +10,10 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -34,13 +36,10 @@ import java.util.Set;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 
 
-
 public class MainActivity extends AppCompatActivity {
 
     private static final String EXTRA_QUIZ_ITEMS = "quiz_items";
-    private Button mBrowseButton;
     private ArrayList<QuizItem> quizList = new ArrayList<>();
-    private RecyclerView recView;
     private QuizAdapter adapter;
 
     @Override
@@ -56,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         //Button to open file browser
-        mBrowseButton = (Button) findViewById(R.id.browse_button);
+        Button mBrowseButton = (Button) findViewById(R.id.browse_button);
         mBrowseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -65,17 +64,15 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //Creates the RecyclerView to display quiz items, and sets up the layout
-        recView = (RecyclerView) findViewById(R.id.quizRecyclerView);
+        RecyclerView recView = (RecyclerView) findViewById(R.id.quizRecyclerView);
         recView.setLayoutManager(new LinearLayoutManager(this));
         recView.setItemAnimator(new DefaultItemAnimator());
+        recView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
 
         //Creates the adapter and sets the RecyclerView's adapter to it
         adapter = new QuizAdapter(quizList);
         recView.setAdapter(adapter);
         loadItems();
-
-
-
     }
 
 
@@ -87,23 +84,33 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         Set<String> QuizItems = preferences.getStringSet(EXTRA_QUIZ_ITEMS, new HashSet<String>());
 
-        //Puts the saved elements into a single string 'path'
-        //Removes the brackets from the string
-        String path = QuizItems.toString().replace("[", "").replace("]", "").trim();
-
-        //If the path is empty, assume no paths were saved and stop loading
-        if (path == ""){
+        //If the set QuizItems is empty, assume no paths were saved and stop loading
+        if (QuizItems.isEmpty()) {
+            Log.d("loadItems: ","No items present in QuizItem set");
             return;
         }
 
+        Log.d("QuizItems", QuizItems.toString());
+        //Puts the saved elements into a single string 'path'
+        String path = QuizItems.toString();
+
+
+        //Removes the brackets from the string
+        path = path.substring(1, path.length() -1);
+        Log.d("Path String", path);
+
+
+
         //Split the string 'path' when there is a comma, then put it into the array 'splitPaths'
         //Then, sort the array alphabetically by the file name, not the file path
-        String[] splitPaths = path.split(",");
+        String[] splitPaths = path.split(", ");
         Arrays.sort(splitPaths, new Comparator<String>() {
             @Override
             public int compare(String str1, String str2) {
                 String substr1 = str1.substring(str1.lastIndexOf("/"));
+                Log.d("Path String", substr1);
                 String substr2 = str2.substring(str2.lastIndexOf("/"));
+                Log.d("Path String", substr2);
                 return substr1.compareTo(substr2);
             }
         });
@@ -112,12 +119,12 @@ public class MainActivity extends AppCompatActivity {
         quizList.clear();
 
         //Add all strings in splitPaths to the adapter quizList, then update the view
-        for (int i = 0; i < splitPaths.length; i++) {
-            path = splitPaths[i];
+        for (String splitPath : splitPaths) {
+            path = splitPath;
             if (path == null) {
                 break;
             }
-            String name = (path.substring(path.lastIndexOf("/") + 1) + "");
+            String name = (path.substring(path.lastIndexOf("/") + 1));
             QuizItem item = new QuizItem(path, name);
             quizList.add(item);
             adapter.notifyDataSetChanged();
@@ -150,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
                 .start();
     }
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -158,16 +166,15 @@ public class MainActivity extends AppCompatActivity {
             String filePath = data.getStringExtra(FilePickerActivity.RESULT_FILE_PATH);
             String fileName = (filePath.substring(filePath.lastIndexOf("/") + 1) + "");
 
-            if(quizList.isEmpty() == true)
-            {
+            if (quizList.isEmpty()) {
                 quizList.add(new QuizItem(filePath, fileName));
-                adapter.notifyDataSetChanged();
                 saveItems();
+                loadItems();
+                adapter.notifyDataSetChanged();
+
                 Toast.makeText(getApplicationContext(), "Quiz List Was Empty", Toast.LENGTH_SHORT).show();
                 return;
-            }
-
-            else {
+            } else {
                 for (QuizItem item : quizList) {
 
                     if (Objects.equals(item.getQuizFilePath(), fileName)) {
@@ -180,9 +187,10 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
+
             quizList.add(new QuizItem(filePath, fileName));
-            adapter.notifyDataSetChanged();
             saveItems();
+            loadItems();
 
             Toast.makeText(getApplicationContext(), "Added " + fileName, Toast.LENGTH_SHORT).show();
 
@@ -190,19 +198,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onPause () {
+    public void onPause() {
         saveItems();
         super.onPause();
     }
 
     @Override
-    public void onStop () {
+    public void onStop() {
         //saveItems();
         super.onStop();
     }
 
     @Override
-    public void onDestroy () {
+    public void onDestroy() {
         //saveItems();
         super.onDestroy();
     }

@@ -2,4 +2,6 @@
     <string name="app_name">LEAP</string>
     <string name="browse">Browse</string>
     <string name="list">List</string>
+    <string name="quiz_name">Quiz Name</string>
+    <string name="quiz_path">Quiz Path</string>
 </resources>

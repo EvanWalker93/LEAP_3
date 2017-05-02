@@ -14,36 +14,30 @@ import java.util.List;
 
 /**
  * Created by Evan on 4/22/2017.
+ * Adapter for QuizItem recyclerView
  */
 
-public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.MyViewHolder>
-{
+public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.MyViewHolder> {
     private List<QuizItem> quizList;
 
 
+    class MyViewHolder extends RecyclerView.ViewHolder {
+        TextView quizName, quizPath;
 
 
-    public class MyViewHolder extends  RecyclerView.ViewHolder
-    {
-        public TextView quizName, quizPath;
-
-
-        public MyViewHolder(View view)
-        {
+        MyViewHolder(View view) {
             super(view);
             quizName = (TextView) view.findViewById(R.id.quizPath);
             quizPath = (TextView) view.findViewById(R.id.quizName);
         }
     }
 
-    public QuizAdapter(List<QuizItem> quizList)
-    {
+    public QuizAdapter(List<QuizItem> quizList) {
         this.quizList = quizList;
     }
 
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
-    {
+    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_item, parent, false);
 
@@ -51,16 +45,14 @@ public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.MyViewHolder>
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position)
-    {
+    public void onBindViewHolder(MyViewHolder holder, int position) {
         QuizItem quiz = quizList.get(position);
         holder.quizPath.setText(quiz.getQuizFilePath());
         holder.quizName.setText(quiz.getQuizFileName());
     }
 
     @Override
-    public int getItemCount()
-    {
+    public int getItemCount() {
         return quizList.size();
     }
 }
